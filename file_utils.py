@@ -4,6 +4,14 @@ import numpy as np
 import cv2
 
 
+def create_dir(_dir):
+    """
+    Creates given directory if it is not present.
+    """
+    if not os.path.exists(_dir):
+        os.makedirs(_dir)
+
+
 # borrowed from https://github.com/lengstrom/fast-style-transfer/blob/master/src/utils.py
 def get_files(img_dir):
     imgs, masks, xmls = list_files(img_dir)
@@ -57,9 +65,6 @@ def saveResult(img_file,
     # result directory
     res_file = dirname + "res_" + filename + '.txt'
     res_img_file = dirname + "res_" + filename + '.jpg'
-
-    if not os.path.isdir(dirname):
-        os.mkdir(dirname)
 
     with open(res_file, 'w') as f:
         for i, box in enumerate(boxes):
