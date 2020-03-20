@@ -1,9 +1,3 @@
-"""
-Copyright (c) 2019-present NAVER Corp.
-MIT License
-"""
-
-# -*- coding: utf-8 -*-
 import os
 import time
 
@@ -154,7 +148,8 @@ def detect_text(image_path: str,
                 mag_ratio: float = 1.5,
                 poly: bool = False,
                 show_time: bool = False,
-                refiner: bool = False):
+                refiner: bool = False,
+                export_extra: bool = True):
     """
     Arguments:
         image_path: path to the image to be processed
@@ -168,6 +163,7 @@ def detect_text(image_path: str,
         poly: enable polygon type
         show_time: show processing time
         refiner: enable link refiner
+        export_extra: export score map, detection points, box visualization
     """
 
     # create output dir
@@ -194,14 +190,19 @@ def detect_text(image_path: str,
                                                poly,
                                                show_time)
 
-    # save score text
-    filename, file_ext = os.path.splitext(os.path.basename(image_path))
-    mask_file = os.path.join(output_dir, "res_" + filename + '_mask.jpg')
-    cv2.imwrite(mask_file, score_text)
+    # export detected text regions
+    file_utils.export_detected_regions(image_path, image, polys, output_dir)
 
-    file_utils.saveResult(image_path,
-                          image[:, :, ::-1],
-                          polys,
-                          dirname=output_dir)
+    if export_extra:
+        # export score map
+        filename, file_ext = os.path.splitext(os.path.basename(image_path))
+        mask_file = os.path.join(output_dir, "res_" + filename + '_mask.jpg')
+        cv2.imwrite(mask_file, score_text)
+
+        # export detected points and box visualization
+        file_utils.export_extra_results(image_path,
+                                        image[:, :, ::-1],
+                                        polys,
+                                        output_dir=output_dir)
 
     print("elapsed time : {}s".format(time.time() - t))
