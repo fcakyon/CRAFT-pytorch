@@ -1,3 +1,7 @@
+from __future__ import absolute_import
+
+__version__ = "0.1.0"
+
 from craft_text_detector.imgproc import read_image
 
 from craft_text_detector.file_utils import (export_detected_regions,
@@ -11,70 +15,7 @@ from craft_text_detector.predict import (load_craftnet_model,
 craft_net = load_craftnet_model()
 
 
-#def detect_text(image_path: str,
-#                output_dir: str = "output/",
-#                text_threshold: float = 0.7,
-#                link_threshold: float = 0.4,
-#                low_text: float = 0.4,
-#                cuda: bool = False,
-#                canvas_size: int = 1280,
-#                mag_ratio: float = 1.5,
-#                poly: bool = False,
-#                show_time: bool = False,
-#                refiner: bool = False,
-#                export_extra: bool = True):
-#    """
-#    Arguments:
-#        image_path: path to the image to be processed
-#        output_dir: path to the results to be exported
-#        text_threshold: text confidence threshold
-#        low_text: text low-bound score
-#        link_threshold: link confidence threshold
-#        cuda: Use cuda for inference
-#        canvas_size: image size for inference
-#        mag_ratio: image magnification ratio
-#        poly: enable polygon type
-#        show_time: show processing time
-#        refiner: enable link refiner
-#        export_extra: export heatmap, detection points, box visualization
-#    """
-#    # get models
-#    craft_net = load_craftnet_model(cuda)
-#    if refiner:
-#        refine_net = load_refinenet_model(cuda)
-#    else:
-#        refine_net = None
-#
-#    t = time.time()
-#
-#    # load image
-#    image = imgproc.read_image(image_path)
-#
-#    # perform text detection
-#    bboxes, polys, heatmap = get_prediction(image,
-#                                            craft_net,
-#                                            refine_net,
-#                                            text_threshold,
-#                                            link_threshold,
-#                                            low_text,
-#                                            cuda,
-#                                            canvas_size,
-#                                            mag_ratio,
-#                                            poly,
-#                                            show_time)
-#
-#    # export detected text regions
-#    file_utils.export_detected_regions(image_path, image, polys, output_dir)
-#
-#    if export_extra:
-#        file_utils.export_extra_results(image_path,
-#                                        image,
-#                                        polys,
-#                                        heatmap,
-#                                        output_dir=output_dir)
-#
-#    print("elapsed time : {}s".format(time.time() - t))
-
+# detect texts
 def detect_text(image_path,
                 output_dir,
                 export_extra=True,
