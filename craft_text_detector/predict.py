@@ -45,7 +45,7 @@ def load_craftnet_model(cuda: bool = False):
 
     # check if weights are already downloaded, if not download
     weight_dir = os.path.dirname(weight_path)
-    url="https://github.com/fcakyon/CRAFT-pytorch/releases/download/v0.0.1/craft_mlt_25k.pth"
+    url="https://github.com/fcakyon/craft_text_detector/releases/download/v0.0.1/craft_mlt_25k.pth"
     if os.path.isfile(weight_path) is not True:
         print("Craft text detector weight will be downloaded to {}"
               .format(weight_path))
@@ -79,7 +79,7 @@ def load_refinenet_model(cuda: bool = False):
 
     # check if weights are already downloaded, if not download
     weight_dir = os.path.dirname(weight_path)
-    url="https://github.com/fcakyon/CRAFT-pytorch/releases/download/v0.0.1/craft_refiner_CTW1500.pth"
+    url="https://github.com/fcakyon/craft_text_detector/releases/download/v0.0.1/craft_refiner_CTW1500.pth"
     if os.path.isfile(weight_path) is not True:
         print("Craft text refiner weight will be downloaded to {}"
               .format(weight_path))
