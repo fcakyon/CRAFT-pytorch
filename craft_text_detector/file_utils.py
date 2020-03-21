@@ -3,6 +3,45 @@ import os
 import cv2
 import copy
 import numpy as np
+from tqdm import tqdm
+from urllib.request import urlretrieve
+
+
+class TqdmUpTo(tqdm):
+    """
+    Provides `update_to(n)` which uses `tqdm.update(delta_n)`.
+    https://pypi.org/project/tqdm/#hooks-and-callbacks
+    """
+    def update_to(self, b=1, bsize=1, tsize=None):
+        """
+        b  : int, optional
+            Number of blocks transferred so far [default: 1].
+        bsize  : int, optional
+            Size of each block (in tqdm units) [default: 1].
+        tsize  : int, optional
+            Total size (in tqdm units). If [default: None] remains unchanged.
+        """
+        if tsize is not None:
+            self.total = tsize
+        self.update(b * bsize - self.n)  # will also set self.n = b * bsize
+
+
+def download(url: str, save_dir: str):
+    """
+    Downloads file by http request, shows remaining time.
+    https://pypi.org/project/tqdm/#hooks-and-callbacks
+    Example inputs:
+        url: 'ftp://smartengines.com/midv-500/dataset/01_alb_id.zip'
+        save_dir: 'data/'
+    """
+
+    # create save_dir if not present
+    create_dir(save_dir)
+    # download file
+    with TqdmUpTo(unit='B', unit_scale=True, miniters=1,
+                  desc=url.split('/')[-1]) as t:  # all optional kwargs
+        urlretrieve(url, filename=os.path.join(save_dir, url.split('/')[-1]),
+                    reporthook=t.update_to, data=None)
 
 
 def create_dir(_dir):
@@ -41,7 +80,14 @@ def list_files(in_path):
     return img_files, mask_files, gt_files
 
 
-def export_detected_region(image, points, file_path):
+def export_detected_region(image, points, file_path, smooth_contour=False):
+    """
+    Arguments:
+        image: full image
+        points: bbox or poly points
+        file_path: path to be exported
+        smooth_contour: if true, curved/smoothed region will be cropped
+    """
     # points should have 1*4*2  shape
     if len(points.shape) == 2:
         points = np.array([np.array(points).astype(np.int32)])
@@ -49,11 +95,12 @@ def export_detected_region(image, points, file_path):
     # create mask with shape of image
     mask = np.zeros(image.shape[0:2], dtype=np.uint8)
 
-    # method 1 smooth region
-    cv2.drawContours(mask, [points], -1, (255, 255, 255), -1, cv2.LINE_AA)
-
-    # method 2 not so smooth region
-    # cv2.fillPoly(mask, points, (255))
+    if smooth_contour:
+        # method 1 smooth region
+        cv2.drawContours(mask, [points], -1, (255, 255, 255), -1, cv2.LINE_AA)
+    else:
+        # method 2 not so smooth region
+        cv2.fillPoly(mask, points, (255))
 
     res = cv2.bitwise_and(image, image, mask=mask)
     rect = cv2.boundingRect(points)  # returns (x,y,w,h) of the rect
@@ -63,8 +110,17 @@ def export_detected_region(image, points, file_path):
     cv2.imwrite(file_path, cropped)
 
 
-def export_detected_regions(image_path, image, polys,
-                            output_dir: str = "output/"):
+def export_detected_regions(image_path, image, regions,
+                            output_dir: str = "output/",
+                            smooth_contour: bool = False):
+    """
+    Arguments:
+        image_path: path to original image
+        image: full/original image
+        regions: list of bboxes or polys
+        output_dir: folder to be exported
+        smooth_contour: if true, curved/smoothed region will be cropped
+    """
     # deepcopy image so that original is not altered
     image = copy.deepcopy(image)
 
@@ -75,14 +131,18 @@ def export_detected_regions(image_path, image, polys,
     crops_dir = os.path.join(output_dir, file_name + "_crops")
     create_dir(crops_dir)
 
-    for ind, poly in enumerate(polys):
+    for ind, region in enumerate(regions):
         file_path = os.path.join(crops_dir, "crop_" + str(ind) + ".png")
-        export_detected_region(image, points=poly, file_path=file_path)
+        export_detected_region(image,
+                               points=region,
+                               file_path=file_path,
+                               smooth_contour=smooth_contour)
 
 
 def export_extra_results(image_path,
                          image,
-                         boxes,
+                         regions,
+                         heatmap,
                          output_dir='output/',
                          verticals=None,
                          texts=None):
@@ -102,18 +162,28 @@ def export_extra_results(image_path,
     filename, file_ext = os.path.splitext(os.path.basename(image_path))
 
     # result directory
-    res_file = output_dir + "res_" + filename + '.txt'
-    res_img_file = output_dir + "res_" + filename + '.jpg'
+    res_file = os.path.join(output_dir,
+                            "result_" + filename + '.txt')
+    res_img_file = os.path.join(output_dir,
+                                "result_" + filename + '.jpg')
+    heatmap_file = os.path.join(output_dir,
+                                "result_" + filename + '_heatmap.jpg')
+
+    # create output dir
+    create_dir(output_dir)
+
+    # export heatmap
+    cv2.imwrite(heatmap_file, heatmap)
 
     with open(res_file, 'w') as f:
-        for i, box in enumerate(boxes):
-            poly = np.array(box).astype(np.int32).reshape((-1))
-            strResult = ','.join([str(p) for p in poly]) + '\r\n'
+        for i, region in enumerate(regions):
+            region = np.array(region).astype(np.int32).reshape((-1))
+            strResult = ','.join([str(r) for r in region]) + '\r\n'
             f.write(strResult)
 
-            poly = poly.reshape(-1, 2)
+            region = region.reshape(-1, 2)
             cv2.polylines(image,
-                          [poly.reshape((-1, 1, 2))],
+                          [region.reshape((-1, 1, 2))],
                           True,
                           color=(0, 0, 255),
                           thickness=2)
@@ -126,14 +196,14 @@ def export_extra_results(image_path,
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 font_scale = 0.5
                 cv2.putText(image, "{}".format(texts[i]),
-                            (poly[0][0]+1, poly[0][1]+1),
+                            (region[0][0]+1, region[0][1]+1),
                             font,
                             font_scale,
                             (0, 0, 0),
                             thickness=1)
                 cv2.putText(image,
                             "{}".format(texts[i]),
-                            tuple(poly[0]),
+                            tuple(region[0]),
                             font,
                             font_scale,
                             (0, 255, 255),
