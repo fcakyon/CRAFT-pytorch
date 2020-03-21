@@ -17,7 +17,7 @@ craft_net = load_craftnet_model()
 
 # detect texts
 def detect_text(image_path,
-                output_dir,
+                output_dir=None,
                 export_extra=True,
                 text_threshold=0.7,
                 link_threshold=0.4,
@@ -57,19 +57,21 @@ def detect_text(image_path,
                                             cuda=cuda,
                                             show_time=show_time)
 
-    # export detected text regions
-    export_detected_regions(image_path=image_path,
-                            image=image,
-                            regions=polys,
-                            output_dir=output_dir)
+    # export if output_dir is given
+    if output_dir is not None:
+        # export detected text regions
+        export_detected_regions(image_path=image_path,
+                                image=image,
+                                regions=polys,
+                                output_dir=output_dir)
 
-    # export heatmap, detection points, box visualization
-    if export_extra:
-        export_extra_results(image_path=image_path,
-                             image=image,
-                             regions=polys,
-                             heatmap=heatmap,
-                             output_dir=output_dir)
+        # export heatmap, detection points, box visualization
+        if export_extra:
+            export_extra_results(image_path=image_path,
+                                 image=image,
+                                 regions=polys,
+                                 heatmap=heatmap,
+                                 output_dir=output_dir)
 
     # return prediction results
     return bboxes, polys, heatmap
