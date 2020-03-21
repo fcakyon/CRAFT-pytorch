@@ -12,7 +12,7 @@ PyTorch implementation for CRAFT text detector that effectively detect text area
 <img width="1000" alt="teaser" src="./figures/craft_example.gif">
 
 ## Updates
-**21 March, 2019**: Initial package release
+**21 March, 2020**: Initial package release
 
 
 ## Getting started
