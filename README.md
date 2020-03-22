@@ -1,3 +1,5 @@
+[![PyPI version](https://badge.fury.io/py/craft-text-detector.svg)](https://badge.fury.io/py/craft-text-detector)
+![CI](https://github.com/fcakyon/craft-text-detector/workflows/CI/badge.svg)
 
 ## CRAFT: Character-Region Awareness For Text detection
 Packaged Version of the Official Pytorch implementation of CRAFT text detector | [Paper](https://arxiv.org/abs/1904.01941) |  [Supplementary](https://youtu.be/HI8MzpY8KMI) | 
