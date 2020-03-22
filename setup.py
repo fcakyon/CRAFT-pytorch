@@ -29,8 +29,8 @@ def get_version():
 setuptools.setup(
     name="craft-text-detector",
     version=get_version(),
-    author="Youngmin Baek, Fatih Cagatay Akyon",
-    author_email="youngmin.baek@navercorp.com, fatihcagatayakyon@gmail.com",
+    author="Fatih Cagatay Akyon",
+    author_email="fatihcagatayakyon@gmail.com",
     description="Character Region Awareness for Text Detection (CRAFT)",
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
