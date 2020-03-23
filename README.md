@@ -67,7 +67,7 @@ craft.export_detected_regions(image_path=image_path,
                               image=image,
                               regions=polys,
                               output_dir=output_dir,
-                              rectify=rectify)
+                              rectify=True)
 
 # export heatmap, detection points, box visualization
 craft.export_extra_results(image_path=image_path,
