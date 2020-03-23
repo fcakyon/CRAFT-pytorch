@@ -87,7 +87,7 @@ def rectify_poly(img, poly):
     height = 0
     for k in range(n):
         box = np.float32([poly[k], poly[k+1], poly[-k-2], poly[-k-1]])
-        width += int((np.linalg.norm(box[0] - box[1]) + np.linalg.norm(box[2] - box[3])/2))
+        width += int((np.linalg.norm(box[0] - box[1]) + np.linalg.norm(box[2] - box[3]))/2)
         height += np.linalg.norm(box[1] - box[2])
     width = int(width)
     height = int(height / n)
@@ -96,7 +96,7 @@ def rectify_poly(img, poly):
     width_step = 0
     for k in range(n):
         box = np.float32([poly[k], poly[k+1], poly[-k-2], poly[-k-1]])
-        w = int((np.linalg.norm(box[0] - box[1]) + np.linalg.norm(box[2] - box[3])/2))
+        w = int((np.linalg.norm(box[0] - box[1]) + np.linalg.norm(box[2] - box[3]))/2)
 
         # Top triangle
         pts1 = box[:3]
