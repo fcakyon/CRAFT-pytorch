@@ -80,46 +80,96 @@ def list_files(in_path):
     return img_files, mask_files, gt_files
 
 
-def export_detected_region(image, points, file_path, smooth_contour=False):
+def rectify_poly(img, poly):
+    # Use Affine transform
+    n = int(len(poly) / 2) - 1
+    width = 0
+    height = 0
+    for k in range(n):
+        box = np.float32([poly[k], poly[k+1], poly[-k-2], poly[-k-1]])
+        width += int((np.linalg.norm(box[0] - box[1]) + np.linalg.norm(box[2] - box[3])/2))
+        height += np.linalg.norm(box[1] - box[2])
+    width = int(width)
+    height = int(height / n)
+
+    output_img = np.zeros((height, width, 3), dtype=np.uint8)
+    width_step = 0
+    for k in range(n):
+        box = np.float32([poly[k], poly[k+1], poly[-k-2], poly[-k-1]])
+        w = int((np.linalg.norm(box[0] - box[1]) + np.linalg.norm(box[2] - box[3])/2))
+
+        # Top triangle
+        pts1 = box[:3]
+        pts2 = np.float32([[width_step, 0], [width_step + w - 1, 0], [width_step + w - 1, height-1]])
+        M = cv2.getAffineTransform(pts1, pts2)
+        warped_img = cv2.warpAffine(img, M, (width, height), borderMode=cv2.BORDER_REPLICATE)
+        warped_mask = np.zeros((height, width, 3), dtype=np.uint8)
+        warped_mask = cv2.fillConvexPoly(warped_mask, np.int32(pts2), (1, 1, 1))
+        output_img[warped_mask == 1] = warped_img[warped_mask == 1]
+
+        # Bottom triangle
+        pts1 = np.vstack((box[0], box[2:]))
+        pts2 = np.float32([[width_step, 0], [width_step + w - 1, height-1], [width_step, height-1]])
+        M = cv2.getAffineTransform(pts1, pts2)
+        warped_img = cv2.warpAffine(img, M, (width, height), borderMode=cv2.BORDER_REPLICATE)
+        warped_mask = np.zeros((height, width, 3), dtype=np.uint8)
+        warped_mask = cv2.fillConvexPoly(warped_mask, np.int32(pts2), (1, 1, 1))
+        cv2.line(warped_mask, (width_step, 0), (width_step + w - 1, height-1), (0, 0, 0), 1)
+        output_img[warped_mask == 1] = warped_img[warped_mask == 1]
+
+        width_step += w
+    return output_img
+
+
+def crop_poly(image, poly):
+    # points should have 1*x*2  shape
+    if len(poly.shape) == 2:
+        poly = np.array([np.array(poly).astype(np.int32)])
+
+    # create mask with shape of image
+    mask = np.zeros(image.shape[0:2], dtype=np.uint8)
+
+    # method 1 smooth region
+    cv2.drawContours(mask, [poly], -1, (255, 255, 255), -1, cv2.LINE_AA)
+    # method 2 not so smooth region
+    # cv2.fillPoly(mask, points, (255))
+
+    # crop around poly
+    res = cv2.bitwise_and(image, image, mask=mask)
+    rect = cv2.boundingRect(poly)  # returns (x,y,w,h) of the rect
+    cropped = res[rect[1]: rect[1] + rect[3], rect[0]: rect[0] + rect[2]]
+
+    return cropped
+
+
+def export_detected_region(image, poly, file_path, rectify=True):
     """
     Arguments:
         image: full image
         points: bbox or poly points
         file_path: path to be exported
-        smooth_contour: if true, curved/smoothed region will be cropped
+        rectify: rectify detected polygon by affine transform
     """
-    # points should have 1*4*2  shape
-    if len(points.shape) == 2:
-        points = np.array([np.array(points).astype(np.int32)])
-
-    # create mask with shape of image
-    mask = np.zeros(image.shape[0:2], dtype=np.uint8)
-
-    if smooth_contour:
-        # method 1 smooth region
-        cv2.drawContours(mask, [points], -1, (255, 255, 255), -1, cv2.LINE_AA)
+    if rectify:
+        # rectify poly region
+        result = rectify_poly(image, poly)
     else:
-        # method 2 not so smooth region
-        cv2.fillPoly(mask, points, (255))
-
-    res = cv2.bitwise_and(image, image, mask=mask)
-    rect = cv2.boundingRect(points)  # returns (x,y,w,h) of the rect
-    cropped = res[rect[1]: rect[1] + rect[3], rect[0]: rect[0] + rect[2]]
+        result = crop_poly(image, poly)
 
     # export corpped region
-    cv2.imwrite(file_path, cropped)
+    cv2.imwrite(file_path, result)
 
 
 def export_detected_regions(image_path, image, regions,
                             output_dir: str = "output/",
-                            smooth_contour: bool = False):
+                            rectify: bool = False):
     """
     Arguments:
         image_path: path to original image
         image: full/original image
         regions: list of bboxes or polys
         output_dir: folder to be exported
-        smooth_contour: if true, curved/smoothed region will be cropped
+        rectify: rectify detected polygon by affine transform
     """
     # deepcopy image so that original is not altered
     image = copy.deepcopy(image)
@@ -134,9 +184,9 @@ def export_detected_regions(image_path, image, regions,
     for ind, region in enumerate(regions):
         file_path = os.path.join(crops_dir, "crop_" + str(ind) + ".png")
         export_detected_region(image,
-                               points=region,
+                               poly=region,
                                file_path=file_path,
-                               smooth_contour=smooth_contour)
+                               rectify=rectify)
 
 
 def export_extra_results(image_path,

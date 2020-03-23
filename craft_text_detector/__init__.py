@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 
 from craft_text_detector.imgproc import read_image
 
@@ -18,6 +18,7 @@ craft_net = load_craftnet_model()
 # detect texts
 def detect_text(image_path,
                 output_dir=None,
+                rectify=True,
                 export_extra=True,
                 text_threshold=0.7,
                 link_threshold=0.4,
@@ -29,6 +30,7 @@ def detect_text(image_path,
     Arguments:
         image_path: path to the image to be processed
         output_dir: path to the results to be exported
+        rectify: rectify detected polygon by affine transform
         export_extra: export heatmap, detection points, box visualization
         text_threshold: text confidence threshold
         link_threshold: link confidence threshold
@@ -63,7 +65,8 @@ def detect_text(image_path,
         export_detected_regions(image_path=image_path,
                                 image=image,
                                 regions=polys,
-                                output_dir=output_dir)
+                                output_dir=output_dir,
+                                rectify=rectify)
 
         # export heatmap, detection points, box visualization
         if export_extra:
