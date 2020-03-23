@@ -26,7 +26,7 @@ pip install craft-text-detector
 ### Basic Usage
 ```python
 # import package
-import craft_text_detection as craft
+import craft_text_detector as craft
 
 # set image path and export folder directory
 image_path = 'figures/idcard.png'
@@ -39,7 +39,7 @@ bboxes, polys, heatmap = craft.detect_text(image_path, output_dir)
 ### Advanced Usage
 ```python
 # import package
-import craft_text_detection as craft
+import craft_text_detector as craft
 
 # set image path and export folder directory
 image_path = 'figures/idcard.png'
