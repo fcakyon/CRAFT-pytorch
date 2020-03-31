@@ -30,34 +30,34 @@ class TestCraftTextDetector(unittest.TestCase):
         cuda = False
         show_time = False
         get_prediction = craft_text_detector.get_prediction
-        bboxes, polys, heatmap = get_prediction(image=image,
-                                                craft_net=craft_net,
-                                                refine_net=refine_net,
-                                                text_threshold=text_threshold,
-                                                link_threshold=link_threshold,
-                                                low_text=low_text,
-                                                cuda=cuda,
-                                                show_time=show_time)
-        self.assertEqual(len(bboxes), 49)
-        self.assertEqual(len(bboxes[0]), 4)
-        self.assertEqual(len(bboxes[0][0]), 2)
-        self.assertEqual(int(bboxes[0][0][0]), 112)
-        self.assertEqual(len(polys), 49)
-        self.assertEqual(heatmap.shape, (384, 1184, 3))
+        prediction_result = get_prediction(image=image,
+                                           craft_net=craft_net,
+                                           refine_net=refine_net,
+                                           text_threshold=text_threshold,
+                                           link_threshold=link_threshold,
+                                           low_text=low_text,
+                                           cuda=cuda,
+                                           show_time=show_time)
+        self.assertEqual(len(prediction_result["boxes"]), 49)
+        self.assertEqual(len(prediction_result["boxes"][0]), 4)
+        self.assertEqual(len(prediction_result["boxes"][0][0]), 2)
+        self.assertEqual(int(prediction_result["boxes"][0][0][0]), 112)
+        self.assertEqual(len(prediction_result["polys"]), 49)
+        self.assertEqual(prediction_result["heatmap"].shape, (384, 1184, 3))
 
     def test_detect_text(self):
-        bboxes, _, _ = craft_text_detector.detect_text(self.image_path)
-        self.assertEqual(len(bboxes), 56)
-        self.assertEqual(len(bboxes[0]), 4)
-        self.assertEqual(len(bboxes[0][0]), 2)
-        self.assertEqual(int(bboxes[0][0][0]), 114)
+        prediction_result = craft_text_detector.detect_text(self.image_path)
+        self.assertEqual(len(prediction_result["boxes"]), 56)
+        self.assertEqual(len(prediction_result["boxes"][0]), 4)
+        self.assertEqual(len(prediction_result["boxes"][0][0]), 2)
+        self.assertEqual(int(prediction_result["boxes"][0][0][0]), 114)
 
-        bboxes, _, _ = craft_text_detector.detect_text(self.image_path,
-                                                       refiner=True)
-        self.assertEqual(len(bboxes), 19)
-        self.assertEqual(len(bboxes[0]), 4)
-        self.assertEqual(len(bboxes[0][0]), 2)
-        self.assertEqual(int(bboxes[0][0][0]), 114)
+        prediction_result = craft_text_detector.detect_text(self.image_path,
+                                                            refiner=True)
+        self.assertEqual(len(prediction_result["boxes"]), 19)
+        self.assertEqual(len(prediction_result["boxes"][0]), 4)
+        self.assertEqual(len(prediction_result["boxes"][0][0]), 2)
+        self.assertEqual(int(prediction_result["boxes"][0][0][0]), 114)
 
 
 if __name__ == '__main__':

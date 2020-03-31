@@ -125,6 +125,8 @@ def get_prediction(image,
         show_time: show processing time
         refiner: enable link refiner
         export_extra: export heatmap, detection points, box visualization
+    Output:
+        {"boxes": boxes, "polys": polys, "heatmap": heatmap}
     """
     t0 = time.time()
 
@@ -180,7 +182,7 @@ def get_prediction(image,
     if show_time:
         print("\ninfer/postproc time : {:.3f}/{:.3f}".format(t0, t1))
 
-    return boxes, polys, heatmap
+    return {"boxes": boxes, "polys": polys, "heatmap": heatmap}
 
 
 #def detect_text(image_path: str,

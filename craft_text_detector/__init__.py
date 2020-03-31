@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-__version__ = "0.1.4"
+__version__ = "0.1.5"
 
 from craft_text_detector.imgproc import read_image
 
@@ -39,6 +39,8 @@ def detect_text(image_path,
         poly: enable polygon type
         show_time: show processing time
         refiner: enable link refiner
+    Output:
+        {"boxes": boxes, "polys": polys, "heatmap": heatmap}
     """
     # load image
     image = read_image(image_path)
@@ -50,21 +52,21 @@ def detect_text(image_path,
         refine_net = None
 
     # perform prediction
-    bboxes, polys, heatmap = get_prediction(image=image,
-                                            craft_net=craft_net,
-                                            refine_net=refine_net,
-                                            text_threshold=text_threshold,
-                                            link_threshold=link_threshold,
-                                            low_text=low_text,
-                                            cuda=cuda,
-                                            show_time=show_time)
+    prediction_result = get_prediction(image=image,
+                                       craft_net=craft_net,
+                                       refine_net=refine_net,
+                                       text_threshold=text_threshold,
+                                       link_threshold=link_threshold,
+                                       low_text=low_text,
+                                       cuda=cuda,
+                                       show_time=show_time)
 
     # export if output_dir is given
     if output_dir is not None:
         # export detected text regions
         export_detected_regions(image_path=image_path,
                                 image=image,
-                                regions=polys,
+                                regions=prediction_result["polys"],
                                 output_dir=output_dir,
                                 rectify=rectify)
 
@@ -72,9 +74,9 @@ def detect_text(image_path,
         if export_extra:
             export_extra_results(image_path=image_path,
                                  image=image,
-                                 regions=polys,
-                                 heatmap=heatmap,
+                                 regions=prediction_result["polys"],
+                                 heatmap=prediction_result["heatmap"],
                                  output_dir=output_dir)
 
     # return prediction results
-    return bboxes, polys, heatmap
+    return prediction_result
