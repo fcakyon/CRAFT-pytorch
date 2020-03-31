@@ -53,7 +53,7 @@ refine_net = craft.load_refinenet_model()
 craft_net = craft.load_craftnet_model()
 
 # perform prediction
-bboxes, polys, heatmap = craft.get_prediction(image=image,
+prediction_result = craft.get_prediction(image=image,
     	                                      craft_net=craft_net,
     	                                      refine_net=refine_net,
     	                                      text_threshold=0.7,
@@ -65,15 +65,15 @@ bboxes, polys, heatmap = craft.get_prediction(image=image,
 # export detected text regions
 craft.export_detected_regions(image_path=image_path,
                               image=image,
-                              regions=polys,
+                              regions=prediction_result["polys"],
                               output_dir=output_dir,
                               rectify=True)
 
 # export heatmap, detection points, box visualization
 craft.export_extra_results(image_path=image_path,
     	                   image=image,
-                           regions=polys,
-                           heatmap=heatmap,
+                           regions=prediction_result["polys"],
+                           heatmap=prediction_result["heatmap"],
                            output_dir=output_dir)
 ```
 
