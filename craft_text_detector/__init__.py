@@ -25,7 +25,8 @@ def detect_text(image_path,
                 low_text=0.4,
                 cuda=False,
                 show_time=False,
-                refiner=False):
+                refiner=True,
+                crop_type="poly"):
     """
     Arguments:
         image_path: path to the image to be processed
@@ -39,8 +40,12 @@ def detect_text(image_path,
         poly: enable polygon type
         show_time: show processing time
         refiner: enable link refiner
+        crop_type: crop regions by detected boxes or polys ("poly" or "box")
     Output:
-        {"boxes": boxes, "polys": polys, "heatmap": heatmap}
+        {"masks": lists of predicted masks 2d as bool array,
+         "boxes": list of coords of points of predicted boxes,
+         "heatmap": visualization of the detected characters,
+         "text_crop_paths": list of paths of the exported text boxes/polys}
     """
     # load image
     image = read_image(image_path)
@@ -61,22 +66,34 @@ def detect_text(image_path,
                                        cuda=cuda,
                                        show_time=show_time)
 
+    # arange regions
+    if crop_type == "box":
+        regions = prediction_result["boxes"]
+    elif crop_type == "poly":
+        regions = prediction_result["polys"]
+    else:
+        raise TypeError("crop_type can be only 'polys' or 'boxes'")
+
     # export if output_dir is given
     if output_dir is not None:
         # export detected text regions
-        export_detected_regions(image_path=image_path,
-                                image=image,
-                                regions=prediction_result["polys"],
-                                output_dir=output_dir,
-                                rectify=rectify)
+        exported_file_paths = export_detected_regions(image_path=image_path,
+                                                      image=image,
+                                                      regions=regions,
+                                                      output_dir=output_dir,
+                                                      rectify=rectify)
+        prediction_result["text_crop_paths"] = exported_file_paths
 
         # export heatmap, detection points, box visualization
         if export_extra:
             export_extra_results(image_path=image_path,
                                  image=image,
-                                 regions=prediction_result["polys"],
+                                 regions=regions,
                                  heatmap=prediction_result["heatmap"],
                                  output_dir=output_dir)
+            prediction_result["text_crop_paths"] = []
+
+
 
     # return prediction results
     return prediction_result

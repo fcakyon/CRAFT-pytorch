@@ -46,18 +46,70 @@ class TestCraftTextDetector(unittest.TestCase):
         self.assertEqual(prediction_result["heatmap"].shape, (384, 1184, 3))
 
     def test_detect_text(self):
-        prediction_result = craft_text_detector.detect_text(self.image_path)
+        prediction_result = craft_text_detector.detect_text(image_path=self.image_path,
+                                                            output_dir=None,
+                                                            rectify=True,
+                                                            export_extra=False,
+                                                            text_threshold=0.7,
+                                                            link_threshold=0.4,
+                                                            low_text=0.4,
+                                                            cuda=False,
+                                                            show_time=False,
+                                                            refiner=False,
+                                                            crop_type="poly")
         self.assertEqual(len(prediction_result["boxes"]), 56)
         self.assertEqual(len(prediction_result["boxes"][0]), 4)
         self.assertEqual(len(prediction_result["boxes"][0][0]), 2)
         self.assertEqual(int(prediction_result["boxes"][0][0][0]), 114)
 
-        prediction_result = craft_text_detector.detect_text(self.image_path,
-                                                            refiner=True)
+        prediction_result = craft_text_detector.detect_text(image_path=self.image_path,
+                                                            output_dir=None,
+                                                            rectify=True,
+                                                            export_extra=False,
+                                                            text_threshold=0.7,
+                                                            link_threshold=0.4,
+                                                            low_text=0.4,
+                                                            cuda=False,
+                                                            show_time=False,
+                                                            refiner=True,
+                                                            crop_type="poly")
         self.assertEqual(len(prediction_result["boxes"]), 19)
         self.assertEqual(len(prediction_result["boxes"][0]), 4)
         self.assertEqual(len(prediction_result["boxes"][0][0]), 2)
-        self.assertEqual(int(prediction_result["boxes"][0][0][0]), 114)
+        self.assertEqual(int(prediction_result["boxes"][0][2][0]), 661)
+
+
+        prediction_result = craft_text_detector.detect_text(image_path=self.image_path,
+                                                            output_dir=None,
+                                                            rectify=False,
+                                                            export_extra=False,
+                                                            text_threshold=0.7,
+                                                            link_threshold=0.4,
+                                                            low_text=0.4,
+                                                            cuda=False,
+                                                            show_time=False,
+                                                            refiner=False,
+                                                            crop_type="box")
+        self.assertEqual(len(prediction_result["boxes"]), 56)
+        self.assertEqual(len(prediction_result["boxes"][0]), 4)
+        self.assertEqual(len(prediction_result["boxes"][0][0]), 2)
+        self.assertEqual(int(prediction_result["boxes"][0][2][0]), 242)
+
+        prediction_result = craft_text_detector.detect_text(image_path=self.image_path,
+                                                            output_dir=None,
+                                                            rectify=False,
+                                                            export_extra=False,
+                                                            text_threshold=0.7,
+                                                            link_threshold=0.4,
+                                                            low_text=0.4,
+                                                            cuda=False,
+                                                            show_time=False,
+                                                            refiner=True,
+                                                            crop_type="box")
+        self.assertEqual(len(prediction_result["boxes"]), 19)
+        self.assertEqual(len(prediction_result["boxes"][0]), 4)
+        self.assertEqual(len(prediction_result["boxes"][0][0]), 2)
+        self.assertEqual(int(prediction_result["boxes"][0][2][0]), 661)
 
 
 if __name__ == '__main__':

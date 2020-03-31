@@ -44,13 +44,13 @@ def load_craftnet_model(cuda: bool = False):
     craft_net = CRAFT()  # initialize
 
     # check if weights are already downloaded, if not download
-    weight_dir = os.path.dirname(weight_path)
-    url="https://github.com/fcakyon/craft_text_detector/releases/download/v0.0.1/craft_mlt_25k.pth"
+    #weight_dir = os.path.dirname(weight_path)
+    url = "https://drive.google.com/uc?id=1bupFXqT-VU6Jjeul13XP7yx2Sg5IHr4J"
     if os.path.isfile(weight_path) is not True:
         print("Craft text detector weight will be downloaded to {}"
               .format(weight_path))
 
-        file_utils.download(url=url, save_dir=weight_dir)
+        file_utils.download(url=url, save_path=weight_path)
 
     # arange device
     if cuda:
@@ -78,13 +78,13 @@ def load_refinenet_model(cuda: bool = False):
     refine_net = RefineNet()  # initialize
 
     # check if weights are already downloaded, if not download
-    weight_dir = os.path.dirname(weight_path)
-    url="https://github.com/fcakyon/craft_text_detector/releases/download/v0.0.1/craft_refiner_CTW1500.pth"
+    #weight_dir = os.path.dirname(weight_path)
+    url = "https://drive.google.com/uc?id=1xcE9qpJXp4ofINwXWVhhQIh9S8Z7cuGj"
     if os.path.isfile(weight_path) is not True:
         print("Craft text refiner weight will be downloaded to {}"
               .format(weight_path))
 
-        file_utils.download(url=url, save_dir=weight_dir)
+        file_utils.download(url=url, save_path=weight_path)
 
     # arange device
     if cuda:
@@ -126,7 +126,9 @@ def get_prediction(image,
         refiner: enable link refiner
         export_extra: export heatmap, detection points, box visualization
     Output:
-        {"boxes": boxes, "polys": polys, "heatmap": heatmap}
+        {"masks": lists of predicted masks 2d as bool array,
+         "boxes": list of coords of points of predicted boxes,
+         "heatmap": visualization of the detected characters}
     """
     t0 = time.time()
 

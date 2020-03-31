@@ -2,46 +2,60 @@
 import os
 import cv2
 import copy
+import gdown
 import numpy as np
-from tqdm import tqdm
-from urllib.request import urlretrieve
+#from tqdm import tqdm
+#from urllib.request import urlretrieve
 
 
-class TqdmUpTo(tqdm):
+#class TqdmUpTo(tqdm):
+#    """
+#    Provides `update_to(n)` which uses `tqdm.update(delta_n)`.
+#    https://pypi.org/project/tqdm/#hooks-and-callbacks
+#    """
+#    def update_to(self, b=1, bsize=1, tsize=None):
+#        """
+#        b  : int, optional
+#            Number of blocks transferred so far [default: 1].
+#        bsize  : int, optional
+#            Size of each block (in tqdm units) [default: 1].
+#        tsize  : int, optional
+#            Total size (in tqdm units). If [default: None] remains unchanged.
+#        """
+#        if tsize is not None:
+#            self.total = tsize
+#        self.update(b * bsize - self.n)  # will also set self.n = b * bsize
+#
+#
+#def download(url: str, save_dir: str):
+#    """
+#    Downloads file by http request, shows remaining time.
+#    https://pypi.org/project/tqdm/#hooks-and-callbacks
+#    Example inputs:
+#        url: 'ftp://smartengines.com/midv-500/dataset/01_alb_id.zip'
+#        save_dir: 'data/'
+#    """
+#
+#    # create save_dir if not present
+#    create_dir(save_dir)
+#    # download file
+#    with TqdmUpTo(unit='B', unit_scale=True, miniters=1,
+#                  desc=url.split('/')[-1]) as t:  # all optional kwargs
+#        urlretrieve(url, filename=os.path.join(save_dir, url.split('/')[-1]),
+#                    reporthook=t.update_to, data=None)
+
+def download(url: str, save_path: str):
     """
-    Provides `update_to(n)` which uses `tqdm.update(delta_n)`.
-    https://pypi.org/project/tqdm/#hooks-and-callbacks
-    """
-    def update_to(self, b=1, bsize=1, tsize=None):
-        """
-        b  : int, optional
-            Number of blocks transferred so far [default: 1].
-        bsize  : int, optional
-            Size of each block (in tqdm units) [default: 1].
-        tsize  : int, optional
-            Total size (in tqdm units). If [default: None] remains unchanged.
-        """
-        if tsize is not None:
-            self.total = tsize
-        self.update(b * bsize - self.n)  # will also set self.n = b * bsize
-
-
-def download(url: str, save_dir: str):
-    """
-    Downloads file by http request, shows remaining time.
-    https://pypi.org/project/tqdm/#hooks-and-callbacks
+    Downloads file from gdrive, shows progress.
     Example inputs:
         url: 'ftp://smartengines.com/midv-500/dataset/01_alb_id.zip'
-        save_dir: 'data/'
+        save_path: 'data/file.zip'
     """
 
     # create save_dir if not present
-    create_dir(save_dir)
+    create_dir(os.path.dirname(save_path))
     # download file
-    with TqdmUpTo(unit='B', unit_scale=True, miniters=1,
-                  desc=url.split('/')[-1]) as t:  # all optional kwargs
-        urlretrieve(url, filename=os.path.join(save_dir, url.split('/')[-1]),
-                    reporthook=t.update_to, data=None)
+    gdown.download(url, save_path, quiet=False)
 
 
 def create_dir(_dir):
@@ -181,12 +195,22 @@ def export_detected_regions(image_path, image, regions,
     crops_dir = os.path.join(output_dir, file_name + "_crops")
     create_dir(crops_dir)
 
+    # init exported file paths
+    exported_file_paths = []
+
+    # export regions
     for ind, region in enumerate(regions):
+        # get export path
         file_path = os.path.join(crops_dir, "crop_" + str(ind) + ".png")
+        # export region
         export_detected_region(image,
                                poly=region,
                                file_path=file_path,
                                rectify=rectify)
+        # note exported file path
+        exported_file_paths.append(file_path)
+
+    return exported_file_paths
 
 
 def export_extra_results(image_path,
