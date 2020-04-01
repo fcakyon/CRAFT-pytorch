@@ -24,6 +24,7 @@ def detect_text(image_path,
                 link_threshold=0.4,
                 low_text=0.4,
                 cuda=False,
+                mag_ratio=1.5,
                 show_time=False,
                 refiner=True,
                 crop_type="poly"):
@@ -37,6 +38,7 @@ def detect_text(image_path,
         link_threshold: link confidence threshold
         low_text: text low-bound score
         cuda: Use cuda for inference
+        mag_ratio: image magnification ratio
         poly: enable polygon type
         show_time: show processing time
         refiner: enable link refiner
@@ -44,6 +46,7 @@ def detect_text(image_path,
     Output:
         {"masks": lists of predicted masks 2d as bool array,
          "boxes": list of coords of points of predicted boxes,
+         "boxes_as_ratio": list of coords of points of predicted boxes as ratios of image size,
          "heatmap": visualization of the detected characters,
          "text_crop_paths": list of paths of the exported text boxes/polys}
     """
@@ -64,6 +67,7 @@ def detect_text(image_path,
                                        link_threshold=link_threshold,
                                        low_text=low_text,
                                        cuda=cuda,
+                                       mag_ratio=mag_ratio,
                                        show_time=show_time)
 
     # arange regions
