@@ -14,6 +14,9 @@ PyTorch implementation for CRAFT text detector that effectively detect text area
 <img width="1000" alt="teaser" src="./figures/craft_example.gif">
 
 ## Updates
+**1 April, 2020**: Python 3.8 support, removed skimage dependency
+**24 March, 2020**: Polygon rectification support
+**23 March, 2020**: Python 3.5 support
 **21 March, 2020**: Initial package release
 
 
@@ -60,6 +63,7 @@ prediction_result = craft.get_prediction(image=image,
 				         link_threshold=0.4,
 				         low_text=0.4,
 				         cuda=True,
+				         mag_ratio=0.8,
 				         show_time=True)
 
 # export detected text regions
