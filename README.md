@@ -33,7 +33,7 @@ image_path = 'figures/idcard.png'
 output_dir = 'outputs/'
 
 # apply craft text detection and export detected regions to output directory
-prediction_result = craft.detect_text(image_path, output_dir, crop_type="poly")
+prediction_result = craft.detect_text(image_path, output_dir, crop_type="poly", cuda=False)
 ```
 
 ### Advanced Usage
@@ -54,13 +54,13 @@ craft_net = craft.load_craftnet_model()
 
 # perform prediction
 prediction_result = craft.get_prediction(image=image,
-	                                     craft_net=craft_net,
-	                                     refine_net=refine_net,
-	                                     text_threshold=0.7,
-	                                     link_threshold=0.4,
-	                                     low_text=0.4,
-	                                     cuda=True,
-	                                     show_time=True)
+				         craft_net=craft_net,
+				         refine_net=refine_net,
+				         text_threshold=0.7,
+				         link_threshold=0.4,
+				         low_text=0.4,
+				         cuda=True,
+				         show_time=True)
 
 # export detected text regions
 exported_file_paths = craft.export_detected_regions(image_path=image_path,
