@@ -128,6 +128,7 @@ def get_prediction(image,
     Output:
         {"masks": lists of predicted masks 2d as bool array,
          "boxes": list of coords of points of predicted boxes,
+         "boxes_as_ratio": list of coords of points of predicted boxes as ratios of image size,
          "heatmap": visualization of the detected characters}
     """
     t0 = time.time()
@@ -184,4 +185,12 @@ def get_prediction(image,
     if show_time:
         print("\ninfer/postproc time : {:.3f}/{:.3f}".format(t0, t1))
 
-    return {"boxes": boxes, "polys": polys, "heatmap": heatmap}
+    # calculate box coords as ratios to image size
+    img_height = image.shape[0]
+    img_width = image.shape[1]
+    boxes_as_ratio = []
+    for box in boxes:
+        boxes_as_ratio.append(box/[img_width, img_height])
+    boxes_as_ratio = np.array(boxes_as_ratio)
+
+    return {"boxes": boxes, "boxes_as_ratio": boxes_as_ratio, "polys": polys, "heatmap": heatmap}
