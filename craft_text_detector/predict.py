@@ -128,7 +128,8 @@ def get_prediction(image,
     Output:
         {"masks": lists of predicted masks 2d as bool array,
          "boxes": list of coords of points of predicted boxes,
-         "boxes_as_ratio": list of coords of points of predicted boxes as ratios of image size,
+         "boxes_as_ratios": list of coords of points of predicted boxes as ratios of image size,
+         "polys_as_ratios": list of coords of points of predicted polys as ratios of image size,
          "heatmap": visualization of the detected characters}
     """
     t0 = time.time()
@@ -202,7 +203,7 @@ def get_prediction(image,
     polys_as_ratio = np.array(boxes_as_ratio)
 
     return {"boxes": boxes,
-            "boxes_as_ratio": boxes_as_ratio,
+            "boxes_as_ratios": boxes_as_ratio,
             "polys": polys,
-            "polys_as_ratio": polys_as_ratio,
+            "polys_as_ratios": polys_as_ratio,
             "heatmap": heatmap}

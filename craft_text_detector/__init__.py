@@ -46,7 +46,8 @@ def detect_text(image_path,
     Output:
         {"masks": lists of predicted masks 2d as bool array,
          "boxes": list of coords of points of predicted boxes,
-         "boxes_as_ratio": list of coords of points of predicted boxes as ratios of image size,
+         "boxes_as_ratios": list of coords of points of predicted boxes as ratios of image size,
+         "polys_as_ratios": list of coords of points of predicted polys as ratios of image size,
          "heatmap": visualization of the detected characters,
          "text_crop_paths": list of paths of the exported text boxes/polys}
     """
