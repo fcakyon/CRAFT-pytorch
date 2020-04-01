@@ -200,7 +200,7 @@ def get_prediction(image,
     polys_as_ratio = []
     for poly in polys:
         polys_as_ratio.append(poly/[img_width, img_height])
-    polys_as_ratio = np.array(boxes_as_ratio)
+    polys_as_ratio = np.array(polys_as_ratio)
 
     return {"boxes": boxes,
             "boxes_as_ratios": boxes_as_ratio,
