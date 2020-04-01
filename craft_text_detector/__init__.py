@@ -75,6 +75,7 @@ def detect_text(image_path,
         raise TypeError("crop_type can be only 'polys' or 'boxes'")
 
     # export if output_dir is given
+    prediction_result["text_crop_paths"] = []
     if output_dir is not None:
         # export detected text regions
         exported_file_paths = export_detected_regions(image_path=image_path,
@@ -91,8 +92,6 @@ def detect_text(image_path,
                                  regions=regions,
                                  heatmap=prediction_result["heatmap"],
                                  output_dir=output_dir)
-            prediction_result["text_crop_paths"] = []
-
 
 
     # return prediction results
