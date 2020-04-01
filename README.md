@@ -15,8 +15,11 @@ PyTorch implementation for CRAFT text detector that effectively detect text area
 
 ## Updates
 **1 April, 2020**: Python 3.8 support, removed skimage dependency
+
 **24 March, 2020**: Polygon rectification support
+
 **23 March, 2020**: Python 3.5 support
+
 **21 March, 2020**: Initial package release
 
 
