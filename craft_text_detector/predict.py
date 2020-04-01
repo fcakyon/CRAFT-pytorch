@@ -193,13 +193,13 @@ def get_prediction(image,
     # calculate box coords as ratios to image size
     boxes_as_ratio = []
     for box in boxes:
-        boxes_as_ratio.append(box/[img_width, img_height])
+        boxes_as_ratio.append(box / [img_width, img_height])
     boxes_as_ratio = np.array(boxes_as_ratio)
 
     # calculate poly coords as ratios to image size
     polys_as_ratio = []
     for poly in polys:
-        polys_as_ratio.append(poly/[img_width, img_height])
+        polys_as_ratio.append(poly / [img_width, img_height])
     polys_as_ratio = np.array(polys_as_ratio)
 
     return {"boxes": boxes,

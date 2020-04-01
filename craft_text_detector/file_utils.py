@@ -100,8 +100,8 @@ def rectify_poly(img, poly):
     width = 0
     height = 0
     for k in range(n):
-        box = np.float32([poly[k], poly[k+1], poly[-k-2], poly[-k-1]])
-        width += int((np.linalg.norm(box[0] - box[1]) + np.linalg.norm(box[2] - box[3]))/2)
+        box = np.float32([poly[k], poly[k + 1], poly[-k - 2], poly[-k - 1]])
+        width += int((np.linalg.norm(box[0] - box[1]) + np.linalg.norm(box[2] - box[3])) / 2)
         height += np.linalg.norm(box[1] - box[2])
     width = int(width)
     height = int(height / n)
@@ -109,12 +109,12 @@ def rectify_poly(img, poly):
     output_img = np.zeros((height, width, 3), dtype=np.uint8)
     width_step = 0
     for k in range(n):
-        box = np.float32([poly[k], poly[k+1], poly[-k-2], poly[-k-1]])
-        w = int((np.linalg.norm(box[0] - box[1]) + np.linalg.norm(box[2] - box[3]))/2)
+        box = np.float32([poly[k], poly[k + 1], poly[-k - 2], poly[-k - 1]])
+        w = int((np.linalg.norm(box[0] - box[1]) + np.linalg.norm(box[2] - box[3])) / 2)
 
         # Top triangle
         pts1 = box[:3]
-        pts2 = np.float32([[width_step, 0], [width_step + w - 1, 0], [width_step + w - 1, height-1]])
+        pts2 = np.float32([[width_step, 0], [width_step + w - 1, 0], [width_step + w - 1, height - 1]])
         M = cv2.getAffineTransform(pts1, pts2)
         warped_img = cv2.warpAffine(img, M, (width, height), borderMode=cv2.BORDER_REPLICATE)
         warped_mask = np.zeros((height, width, 3), dtype=np.uint8)
@@ -123,12 +123,12 @@ def rectify_poly(img, poly):
 
         # Bottom triangle
         pts1 = np.vstack((box[0], box[2:]))
-        pts2 = np.float32([[width_step, 0], [width_step + w - 1, height-1], [width_step, height-1]])
+        pts2 = np.float32([[width_step, 0], [width_step + w - 1, height-1], [width_step, height - 1]])
         M = cv2.getAffineTransform(pts1, pts2)
         warped_img = cv2.warpAffine(img, M, (width, height), borderMode=cv2.BORDER_REPLICATE)
         warped_mask = np.zeros((height, width, 3), dtype=np.uint8)
         warped_mask = cv2.fillConvexPoly(warped_mask, np.int32(pts2), (1, 1, 1))
-        cv2.line(warped_mask, (width_step, 0), (width_step + w - 1, height-1), (0, 0, 0), 1)
+        cv2.line(warped_mask, (width_step, 0), (width_step + w - 1, height - 1), (0, 0, 0), 1)
         output_img[warped_mask == 1] = warped_img[warped_mask == 1]
 
         width_step += w

@@ -98,6 +98,5 @@ def detect_text(image_path,
                                  heatmap=prediction_result["heatmap"],
                                  output_dir=output_dir)
 
-
     # return prediction results
     return prediction_result

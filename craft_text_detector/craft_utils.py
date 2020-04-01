@@ -14,7 +14,7 @@ import math
 
 def warpCoord(Minv, pt):
     out = np.matmul(Minv, (pt[0], pt[1], 1))
-    return np.array([out[0]/out[2], out[1]/out[2]])
+    return np.array([out[0] / out[2], out[1] / out[2]])
 
 
 """ end of auxilary functions """
@@ -33,7 +33,7 @@ def getDetBoxes_core(textmap, linkmap,
 
     text_score_comb = np.clip(text_score + link_score, 0, 1)
     nLabels, labels, stats, centroids = cv2.connectedComponentsWithStats(
-             text_score_comb.astype(np.uint8), connectivity=4)
+            text_score_comb.astype(np.uint8), connectivity=4)
 
     det = []
     mapper = []
@@ -90,7 +90,7 @@ def getDetBoxes_core(textmap, linkmap,
 
         # make clock-wise order
         startidx = box.sum(axis=1).argmin()
-        box = np.roll(box, 4-startidx, 0)
+        box = np.roll(box, 4 - startidx, 0)
         box = np.array(box)
 
         det.append(box)
@@ -186,8 +186,8 @@ def getPoly_core(boxes, labels, mapper, linkmap):
                 continue  # No polygon area
 
             if prev_h < cur_h:
-                pp[int((seg_num - 1)/2)] = (x, cy)
-                seg_height[int((seg_num - 1)/2)] = cur_h
+                pp[int((seg_num - 1) / 2)] = (x, cy)
+                seg_height[int((seg_num - 1) / 2)] = cur_h
                 prev_h = cur_h
 
         # processing last segment
