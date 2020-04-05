@@ -27,6 +27,11 @@ PyTorch implementation for CRAFT text detector that effectively detect text area
 
 ## Getting started
 ### Installation
+- Install using conda for Linux, Mac and Windows (preferred):
+```console
+conda install -c fcakyon craft-text-detector
+```
+- Install using pip for Linux and Mac:
 ```console
 pip install craft-text-detector
 ```
