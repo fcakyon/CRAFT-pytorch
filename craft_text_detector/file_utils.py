@@ -239,9 +239,9 @@ def export_extra_results(image_path,
     res_file = os.path.join(output_dir,
                             "result_" + filename + '.txt')
     res_img_file = os.path.join(output_dir,
-                                "result_" + filename + '.jpg')
+                                "result_" + filename + '.png')
     heatmap_file = os.path.join(output_dir,
-                                "result_" + filename + '_heatmap.jpg')
+                                "result_" + filename + '_heatmap.png')
 
     # create output dir
     create_dir(output_dir)
