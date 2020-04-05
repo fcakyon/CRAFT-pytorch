@@ -30,7 +30,7 @@ setuptools.setup(
     name="craft-text-detector",
     version=get_version(),
     author="Fatih Cagatay Akyon",
-    author_email="",
+    license="MIT",
     description="Character Region Awareness for Text Detection (CRAFT)",
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
