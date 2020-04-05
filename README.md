@@ -1,5 +1,7 @@
 [![PyPI version](https://badge.fury.io/py/craft-text-detector.svg)](https://badge.fury.io/py/craft-text-detector)
-![CI](https://github.com/fcakyon/craft-text-detector/workflows/CI/badge.svg)
+[![Conda version](https://anaconda.org/fcakyon/craft-text-detector/badges/version.svg)](https://anaconda.org/fcakyon/craft-text-detector)
+[![CI](https://github.com/fcakyon/craft-text-detector/workflows/CI/badge.svg)](https://github.com/fcakyon/craft-text-detector/actions?query=event%3Apush+branch%3Amaster+is%3Acompleted+workflow%3ACI)
+
 
 ## CRAFT: Character-Region Awareness For Text detection
 Packaged Version of the Official Pytorch implementation of CRAFT text detector | [Paper](https://arxiv.org/abs/1904.01941) |  [Supplementary](https://youtu.be/HI8MzpY8KMI) |
@@ -14,6 +16,8 @@ PyTorch implementation for CRAFT text detector that effectively detect text area
 <img width="1000" alt="teaser" src="./figures/craft_example.gif">
 
 ## Updates
+**6 April, 2020**: Conda package release
+
 **1 April, 2020**: Python 3.8 support, removed skimage dependency
 
 **24 March, 2020**: Polygon rectification support
@@ -25,6 +29,11 @@ PyTorch implementation for CRAFT text detector that effectively detect text area
 
 ## Getting started
 ### Installation
+- Install using conda for Linux, Mac and Windows (preferred):
+```console
+conda install -c fcakyon craft-text-detector
+```
+- Install using pip for Linux and Mac:
 ```console
 pip install craft-text-detector
 ```

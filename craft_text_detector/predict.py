@@ -37,14 +37,13 @@ def load_craftnet_model(cuda: bool = False):
     # get craft net path
     home_path = str(Path.home())
     weight_path = os.path.join(home_path,
-                               "craft_text_detector",
+                               ".craft_text_detector",
                                "weights",
                                "craft_mlt_25k.pth")
     # load craft net
     craft_net = CRAFT()  # initialize
 
     # check if weights are already downloaded, if not download
-    #weight_dir = os.path.dirname(weight_path)
     url = "https://drive.google.com/uc?id=1bupFXqT-VU6Jjeul13XP7yx2Sg5IHr4J"
     if os.path.isfile(weight_path) is not True:
         print("Craft text detector weight will be downloaded to {}"
@@ -70,7 +69,7 @@ def load_refinenet_model(cuda: bool = False):
     # get refine net path
     home_path = str(Path.home())
     weight_path = os.path.join(home_path,
-                               "craft_text_detector",
+                               ".craft_text_detector",
                                "weights",
                                "craft_refiner_CTW1500.pth")
     # load refine net
@@ -78,7 +77,6 @@ def load_refinenet_model(cuda: bool = False):
     refine_net = RefineNet()  # initialize
 
     # check if weights are already downloaded, if not download
-    #weight_dir = os.path.dirname(weight_path)
     url = "https://drive.google.com/uc?id=1xcE9qpJXp4ofINwXWVhhQIh9S8Z7cuGj"
     if os.path.isfile(weight_path) is not True:
         print("Craft text refiner weight will be downloaded to {}"
