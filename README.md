@@ -16,6 +16,8 @@ PyTorch implementation for CRAFT text detector that effectively detect text area
 <img width="1000" alt="teaser" src="./figures/craft_example.gif">
 
 ## Updates
+**6 April, 2020**: Conda package release
+
 **1 April, 2020**: Python 3.8 support, removed skimage dependency
 
 **24 March, 2020**: Polygon rectification support
