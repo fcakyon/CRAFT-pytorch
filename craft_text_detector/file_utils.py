@@ -123,7 +123,7 @@ def rectify_poly(img, poly):
 
         # Bottom triangle
         pts1 = np.vstack((box[0], box[2:]))
-        pts2 = np.float32([[width_step, 0], [width_step + w - 1, height-1], [width_step, height - 1]])
+        pts2 = np.float32([[width_step, 0], [width_step + w - 1, height - 1], [width_step, height - 1]])
         M = cv2.getAffineTransform(pts1, pts2)
         warped_img = cv2.warpAffine(img, M, (width, height), borderMode=cv2.BORDER_REPLICATE)
         warped_mask = np.zeros((height, width, 3), dtype=np.uint8)
@@ -270,7 +270,7 @@ def export_extra_results(image_path,
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 font_scale = 0.5
                 cv2.putText(image, "{}".format(texts[i]),
-                            (region[0][0]+1, region[0][1]+1),
+                            (region[0][0] + 1, region[0][1] + 1),
                             font,
                             font_scale,
                             (0, 0, 0),
