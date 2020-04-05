@@ -15,7 +15,7 @@ requirements:
   build:
     - python
     - numpy>=1.11.1
-    - scipy>=1.3.2
+    - scipy
     - opencv
     - pytorch>=0.4.1
     - torchvision>=0.2.1
@@ -23,7 +23,7 @@ requirements:
   run:
     - python
     - numpy>=1.11.1
-    - scipy>=1.3.2
+    - scipy
     - opencv
     - gdown>=3.10.1
     - pytorch>=0.4.1
