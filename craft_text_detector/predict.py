@@ -111,9 +111,10 @@ def get_prediction(image,
                    show_time: bool = False):
     """
     Arguments:
-        image_path: path to the image to be processed
+        image: image to be processed
         output_dir: path to the results to be exported
-        text_threshold: text confidence threshold
+        craft_net: craft net model
+		refine_net: refine net model
         link_threshold: link confidence threshold
         low_text: text low-bound score
         cuda: Use cuda for inference
@@ -121,8 +122,6 @@ def get_prediction(image,
         mag_ratio: image magnification ratio
         poly: enable polygon type
         show_time: show processing time
-        refiner: enable link refiner
-        export_extra: export heatmap, detection points, box visualization
     Output:
         {"masks": lists of predicted masks 2d as bool array,
          "boxes": list of coords of points of predicted boxes,
