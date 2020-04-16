@@ -4,45 +4,7 @@ import cv2
 import copy
 import gdown
 import numpy as np
-#from tqdm import tqdm
-#from urllib.request import urlretrieve
 
-
-#class TqdmUpTo(tqdm):
-#    """
-#    Provides `update_to(n)` which uses `tqdm.update(delta_n)`.
-#    https://pypi.org/project/tqdm/#hooks-and-callbacks
-#    """
-#    def update_to(self, b=1, bsize=1, tsize=None):
-#        """
-#        b  : int, optional
-#            Number of blocks transferred so far [default: 1].
-#        bsize  : int, optional
-#            Size of each block (in tqdm units) [default: 1].
-#        tsize  : int, optional
-#            Total size (in tqdm units). If [default: None] remains unchanged.
-#        """
-#        if tsize is not None:
-#            self.total = tsize
-#        self.update(b * bsize - self.n)  # will also set self.n = b * bsize
-#
-#
-#def download(url: str, save_dir: str):
-#    """
-#    Downloads file by http request, shows remaining time.
-#    https://pypi.org/project/tqdm/#hooks-and-callbacks
-#    Example inputs:
-#        url: 'ftp://smartengines.com/midv-500/dataset/01_alb_id.zip'
-#        save_dir: 'data/'
-#    """
-#
-#    # create save_dir if not present
-#    create_dir(save_dir)
-#    # download file
-#    with TqdmUpTo(unit='B', unit_scale=True, miniters=1,
-#                  desc=url.split('/')[-1]) as t:  # all optional kwargs
-#        urlretrieve(url, filename=os.path.join(save_dir, url.split('/')[-1]),
-#                    reporthook=t.update_to, data=None)
 
 def download(url: str, save_path: str):
     """
@@ -216,7 +178,7 @@ def export_detected_regions(image_path, image, regions,
 def export_extra_results(image_path,
                          image,
                          regions,
-                         heatmap,
+                         heatmaps,
                          output_dir='output/',
                          verticals=None,
                          texts=None):
@@ -237,17 +199,20 @@ def export_extra_results(image_path,
 
     # result directory
     res_file = os.path.join(output_dir,
-                            "result_" + filename + '.txt')
+                            filename + '.txt')
     res_img_file = os.path.join(output_dir,
-                                "result_" + filename + '.png')
-    heatmap_file = os.path.join(output_dir,
-                                "result_" + filename + '_heatmap.png')
+                                filename + '.png')
+    text_heatmap_file = os.path.join(output_dir,
+                                     filename + '_text_score_heatmap.png')
+    link_heatmap_file = os.path.join(output_dir,
+                                     filename + '_link_score_heatmap.png')
 
     # create output dir
     create_dir(output_dir)
 
-    # export heatmap
-    cv2.imwrite(heatmap_file, heatmap)
+    # export heatmaps
+    cv2.imwrite(text_heatmap_file, heatmaps["text_score_heatmap"])
+    cv2.imwrite(link_heatmap_file, heatmaps["link_score_heatmap"])
 
     with open(res_file, 'w') as f:
         for i, region in enumerate(regions):
@@ -261,10 +226,6 @@ def export_extra_results(image_path,
                           True,
                           color=(0, 0, 255),
                           thickness=2)
-#            ptColor = (0, 255, 255)
-#            if verticals is not None:
-#                if verticals[i]:
-#                    ptColor = (255, 0, 0)
 
             if texts is not None:
                 font = cv2.FONT_HERSHEY_SIMPLEX

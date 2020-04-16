@@ -16,6 +16,9 @@ from craft_text_detector.models.craftnet import CRAFT
 
 from collections import OrderedDict
 
+CRAFT_GDRIVE_URL = "https://drive.google.com/uc?id=1bupFXqT-VU6Jjeul13XP7yx2Sg5IHr4J"
+REFINENET_GDRIVE_URL = "https://drive.google.com/uc?id=1xcE9qpJXp4ofINwXWVhhQIh9S8Z7cuGj"
+
 
 def copyStateDict(state_dict):
     if list(state_dict.keys())[0].startswith("module"):
@@ -44,7 +47,7 @@ def load_craftnet_model(cuda: bool = False):
     craft_net = CRAFT()  # initialize
 
     # check if weights are already downloaded, if not download
-    url = "https://drive.google.com/uc?id=1bupFXqT-VU6Jjeul13XP7yx2Sg5IHr4J"
+    url = CRAFT_GDRIVE_URL
     if os.path.isfile(weight_path) is not True:
         print("Craft text detector weight will be downloaded to {}"
               .format(weight_path))
@@ -77,7 +80,7 @@ def load_refinenet_model(cuda: bool = False):
     refine_net = RefineNet()  # initialize
 
     # check if weights are already downloaded, if not download
-    url = "https://drive.google.com/uc?id=1xcE9qpJXp4ofINwXWVhhQIh9S8Z7cuGj"
+    url = REFINENET_GDRIVE_URL
     if os.path.isfile(weight_path) is not True:
         print("Craft text refiner weight will be downloaded to {}"
               .format(weight_path))
@@ -105,7 +108,7 @@ def get_prediction(image,
                    link_threshold: float = 0.4,
                    low_text: float = 0.4,
                    cuda: bool = False,
-                   canvas_size: int = 1280,
+                   long_size: int = 1280,
                    mag_ratio: float = 1.5,
                    poly: bool = True,
                    show_time: bool = False):
@@ -115,11 +118,12 @@ def get_prediction(image,
         output_dir: path to the results to be exported
         craft_net: craft net model
 		refine_net: refine net model
+        text_threshold: text confidence threshold
         link_threshold: link confidence threshold
         low_text: text low-bound score
         cuda: Use cuda for inference
         canvas_size: image size for inference
-        mag_ratio: image magnification ratio
+        long_size: desired longest image size for inference
         poly: enable polygon type
         show_time: show processing time
     Output:
@@ -127,14 +131,13 @@ def get_prediction(image,
          "boxes": list of coords of points of predicted boxes,
          "boxes_as_ratios": list of coords of points of predicted boxes as ratios of image size,
          "polys_as_ratios": list of coords of points of predicted polys as ratios of image size,
-         "heatmap": visualization of the detected characters}
+         "heatmaps": visualizations of the detected characters/links}
     """
     t0 = time.time()
 
     # resize
     img_resized, target_ratio, size_heatmap = imgproc.resize_aspect_ratio(
-            image, canvas_size, interpolation=cv2.INTER_LINEAR,
-            mag_ratio=mag_ratio)
+        image, long_size, interpolation=cv2.INTER_LINEAR)
     ratio_h = ratio_w = 1 / target_ratio
 
     # preprocessing
@@ -163,8 +166,8 @@ def get_prediction(image,
 
     # Post-processing
     boxes, polys = craft_utils.getDetBoxes(
-            score_text, score_link, text_threshold, link_threshold, low_text,
-            poly)
+        score_text, score_link, text_threshold, link_threshold, low_text,
+        poly)
 
     # coordinate adjustment
     boxes = craft_utils.adjustResultCoordinates(boxes, ratio_w, ratio_h)
@@ -176,9 +179,8 @@ def get_prediction(image,
     t1 = time.time() - t1
 
     # render results (optional)
-    render_img = score_text.copy()
-    render_img = np.hstack((render_img, score_link))
-    heatmap = imgproc.cvt2HeatmapImg(render_img)
+    text_score_heatmap = imgproc.cvt2HeatmapImg(score_text)
+    link_score_heatmap = imgproc.cvt2HeatmapImg(score_link)
 
     if show_time:
         print("\ninfer/postproc time : {:.3f}/{:.3f}".format(t0, t1))
@@ -203,4 +205,5 @@ def get_prediction(image,
             "boxes_as_ratios": boxes_as_ratio,
             "polys": polys,
             "polys_as_ratios": polys_as_ratio,
-            "heatmap": heatmap}
+            "heatmaps": {"text_score_heatmap": text_score_heatmap,
+                         "link_score_heatmap": link_score_heatmap}}

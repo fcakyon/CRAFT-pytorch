@@ -24,7 +24,7 @@ def detect_text(image_path,
                 link_threshold=0.4,
                 low_text=0.4,
                 cuda=False,
-                mag_ratio=1.5,
+                long_size=1280,
                 show_time=False,
                 refiner=True,
                 crop_type="poly"):
@@ -38,8 +38,7 @@ def detect_text(image_path,
         link_threshold: link confidence threshold
         low_text: text low-bound score
         cuda: Use cuda for inference
-        mag_ratio: image magnification ratio
-        poly: enable polygon type
+        long_size: desired longest image size for inference
         show_time: show processing time
         refiner: enable link refiner
         crop_type: crop regions by detected boxes or polys ("poly" or "box")
@@ -48,7 +47,7 @@ def detect_text(image_path,
          "boxes": list of coords of points of predicted boxes,
          "boxes_as_ratios": list of coords of points of predicted boxes as ratios of image size,
          "polys_as_ratios": list of coords of points of predicted polys as ratios of image size,
-         "heatmap": visualization of the detected characters,
+         "heatmaps": visualization of the detected characters/links,
          "text_crop_paths": list of paths of the exported text boxes/polys}
     """
     # load image
@@ -68,7 +67,7 @@ def detect_text(image_path,
                                        link_threshold=link_threshold,
                                        low_text=low_text,
                                        cuda=cuda,
-                                       mag_ratio=mag_ratio,
+                                       long_size=long_size,
                                        show_time=show_time)
 
     # arange regions
@@ -95,7 +94,7 @@ def detect_text(image_path,
             export_extra_results(image_path=image_path,
                                  image=image,
                                  regions=regions,
-                                 heatmap=prediction_result["heatmap"],
+                                 heatmaps=prediction_result["heatmaps"],
                                  output_dir=output_dir)
 
     # return prediction results
